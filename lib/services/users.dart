@@ -6,8 +6,9 @@ class AddUser extends StatelessWidget {
   final String fullName;
   final String emailAddress;
   List cartItems;
+  List prevOrders;
 
-  AddUser(this.fullName, this.emailAddress, this.cartItems);
+  AddUser(this.fullName, this.emailAddress, this.cartItems, this.prevOrders);
 
   @override
   Widget build(BuildContext context) {
@@ -18,8 +19,8 @@ class AddUser extends StatelessWidget {
       // Call the user's CollectionReference to add a new user
       return users
           .add({
-            'full_name': fullName, // John Doe
-            'company': emailAddress, // Stokes and Sons
+            'fullName': fullName, 
+            'email': emailAddress, 
           })
           .then((value) => print("User Added"))
           .catchError((error) => print("Failed to add user: $error"));

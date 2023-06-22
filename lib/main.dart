@@ -1,4 +1,3 @@
-import 'package:e_commerce/pages/login.dart';
 import 'package:e_commerce/pages/welcome.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
