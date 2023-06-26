@@ -1,7 +1,8 @@
-import 'package:e_commerce/pages/login.dart';
+import 'package:e_commerce/pages/authstate.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:neopop/widgets/buttons/neopop_button/neopop_button.dart';
+import 'package:lottie/lottie.dart';
 
 class Welcome extends StatelessWidget {
   const Welcome({super.key});
@@ -9,9 +10,9 @@ class Welcome extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor:Color.fromARGB(255, 110, 84, 84),
+      backgroundColor:Colors.white,
       appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 110, 84, 84),
+        backgroundColor: Colors.white,
         elevation: 0,
       ),
       body: Center(
@@ -21,53 +22,57 @@ class Welcome extends StatelessWidget {
               width: 400,
               height: 400,
               alignment: Alignment.topCenter,
-              padding: EdgeInsets.all(16),
-              child: Card(
-                child: Image.asset('assets/Image.png'),
-              ),
+              padding: const EdgeInsets.all(16),
+              child: Lottie.asset('assets/lotties/welcome.json'),
             ),
-            Text('Jomo',
+            const Text('Jomo',
             style: TextStyle(
               fontSize: 25,
               fontWeight: FontWeight.bold,
             ),),
-            SizedBox(height: 5,),
-            Text('Your personal stylist', 
+            const SizedBox(height: 5,),
+            const Text('Your personal stylist', 
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.normal,
             ),),
-            SizedBox(height: 10),
-            Text('Discover the latest fashion trends, \nstyles, and products all in one place.',
+            const SizedBox(height: 10),
+            const Text('Discover the latest fashion trends, \nstyles, and products all in one place.',
             style: TextStyle(
               fontSize: 12,
             ),),
-            SizedBox(height: 20,),
+            const SizedBox(height: 20,),
             Padding(
               padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
-              child: NeoPopButton(
-                
-                color: Colors.white,
-                onTapUp: () {
-                  HapticFeedback.vibrate();
-                  Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const Login()),
-              );
-                  },
-                onTapDown: () => HapticFeedback.vibrate(),
-                
-                child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                    child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                  Text("Explore"),
-              ],
-                    ),
-                ),
-            ),
-            ),
+
+                child: NeoPopButton(
+                  
+                  color: Colors.black,
+                  onTapUp: () {
+                    HapticFeedback.vibrate();
+                     Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const AuthState()),
+                );
+                    },
+                  onTapDown: () {
+                    HapticFeedback.vibrate();
+                    },
+                     
+                  
+                  child: const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                      child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                    Text("Explore",
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),),
+                ],
+                      ),
+                  ),
+                ), )    
           ],
         ),
       )
