@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:e_commerce/models/product.dart';
 import 'package:get/get.dart';

@@ -1,8 +1,8 @@
-import 'package:e_commerce/pages/home.dart';
-import 'package:e_commerce/services/users.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:e_commerce/pages/signin.dart';
 import 'package:flutter/material.dart';
 import 'package:e_commerce/services/auth.dart';
+import 'package:flutter/services.dart';
+import 'package:neopop/widgets/buttons/neopop_button/neopop_button.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -19,113 +19,87 @@ class _LoginState extends State<Login> {
     var AUTH = auth();
     TextEditingController _email = TextEditingController();
     TextEditingController _password = TextEditingController();
-    TextEditingController _name = TextEditingController();
-
-
-    // FirebaseAuth.instance.authStateChanges().listen((User? user) {
-    //   if (user == null) {
-    //     print('User is currently signed out!');
-    //   } else {
-    //     // print('User is signed in!');
-    //     Navigator.push(
-    //       context,
-    //       MaterialPageRoute(builder: (context) => Home()),
-    //     );
-    //   }
-    // });
 
     return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 231, 230, 230),
       body: SafeArea(
         child: Center(
-          child: Card(
-            child: Column(
-              children: [
-                TextField(
-                  controller: _email,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'E-mail ID',
-              ),
-              ),
-              SizedBox(height: 5,),
-              TextField(
-              controller: _password,
-              obscureText: true,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'Password',
-              ),
-              ),
-              SizedBox(height: 5),
-                TextButton(
-                  child: ValueListenableBuilder(
-                      valueListenable: _loginStatus,
-                      builder: (context, loading, child) {
-                        return _loginStatus.value == 'Loading'
-                            ? const CircularProgressIndicator()
-                            : const Text('Sign IN');
-                      }),
-                  onPressed: () {
-                    _loginStatus.value = 'Loading';
-                    _loginStatus.value =
-                        AUTH.signInWithEmailAndPassword(_email.text, _password.text);
-                  },
+          child: Container(
+            padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
+            margin: const EdgeInsets.fromLTRB(5, 0, 5, 0),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const SizedBox(height: 100),
+                  TextField(
+                    controller: _email,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  labelText: 'E-mail ID',
                 ),
-                SizedBox(height: 10,),
-                TextButton(child: ValueListenableBuilder(
-                      valueListenable: _loginStatus,
-                      builder: (context, loading, child) {
-                        return _loginStatus.value == 'Loading'
-                            ? const CircularProgressIndicator()
-                            : const Text('SIGN UP');
-                      }),
-                  onPressed: () {
-                    Card(
-                      child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  TextField(
-                                    controller: _name,
-                                decoration: InputDecoration(
-                                  border: OutlineInputBorder(),
-                                  labelText: 'Name',
-                                ),
-                                ),
-                                  TextField(
-                                    controller: _email,
-                                decoration: InputDecoration(
-                                  border: OutlineInputBorder(),
-                                  labelText: 'E-mail ID',
-                                ),
-                                ),
-                                SizedBox(height: 5,),
-                                TextField(
-                                controller: _password,
-                                obscureText: true,
-                                decoration: InputDecoration(
-                                  border: OutlineInputBorder(),
-                                  labelText: 'Password',
-                                ),
-                                ),
-                                SizedBox(height: 5),
-                                  TextButton(
-                                    child: ValueListenableBuilder(
+                ),
+                const SizedBox(height: 5,),
+                TextField(
+                controller: _password,
+                obscureText: true,
+                decoration:  InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  labelText: 'Password',
+                ),
+                ),
+                const SizedBox(height: 5),
+
+                  NeoPopButton(
+                    color: const Color.fromARGB(255, 255, 255, 255),
+                        onTapUp: () {
+                    HapticFeedback.vibrate();},
+                  onTapDown: () {
+                    HapticFeedback.vibrate();
+                   _loginStatus.value =  AUTH.signInWithEmailAndPassword(_email.text, _password.text);
+                    },
+                    child: ValueListenableBuilder(
                         valueListenable: _loginStatus,
                         builder: (context, loading, child) {
                           return _loginStatus.value == 'Loading'
                               ? const CircularProgressIndicator()
-                              : const Text('Sign IN');
-                        }),
-                                    onPressed: () {
-                     _loginStatus.value = 'Loading';
-                    _loginStatus.value =
-                        AUTH.createUserWithEmailAndPassword(_email.text, _password.text);
-                        AddUser(_name.text, _email.text, [], []);
-                                    })]),
-                    );
-                  },
-                )
-              ],
+                              : const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                      child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                    Text("Login"),
+                ],
+                      ),
+                  );
+                        }),),
+
+
+
+                  const SizedBox(height: 10,),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text('Not a memeber?'),
+                      const SizedBox(width: 5,),
+                      TextButton(
+                    child: const Text('Join now'),
+                    onPressed: () {
+                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(builder: (context) => const SignIn()),
+                                        );
+                    },
+                  ),
+                    ],
+                  )
+                  
+                ],
+              ),
             ),
           ),
         ),
