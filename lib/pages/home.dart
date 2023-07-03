@@ -1,25 +1,29 @@
+import 'dart:async';
+import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_commerce/models/product.dart';
 import 'package:e_commerce/pages/fav.dart';
 import 'package:e_commerce/pages/login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
+import 'package:lottie/lottie.dart';
+import '../routes/navigation_service.dart';
 import '../services/productcontroller.dart';
 import 'cart.dart';
+import 'display.dart';
 
 
-CollectionReference user_collection = FirebaseFirestore.instance.collection('Users');
+CollectionReference user_collection = FirebaseFirestore.instance.collection('users');
  
 class Home extends StatelessWidget {
    Home({super.key});
-
-  @override
+@override
   Widget build(BuildContext context) {
 
     final ProductController productController = Get.put(ProductController());
+    // NavigationService service = NavigationService();
 
     return Scaffold(
       appBar: AppBar(
@@ -44,20 +48,27 @@ class Home extends StatelessWidget {
     ),
   ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(5),
-        child:
-        GridView.builder(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            childAspectRatio: (1 / 1.5),
-            ), 
-            itemCount: productController.productList.length,
-          itemBuilder: (context, index) {
-              return TileView(productController.productList[index]);
-            },), 
-            
-      ),
+      body: FutureBuilder(
+       future: RemoteServices.fetchProducts(),
+       builder: ((context, snapshot) {
+         if(snapshot.hasData) {
+           return GridView.builder(
+               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+               crossAxisCount: 2,
+               childAspectRatio: (1 / 1.4),
+               ), 
+               itemCount: productController.productList.length,
+             itemBuilder: (context, index) {
+                 return TileView(productController.productList[index]);
+               },);
+         } else {
+           return Center(
+             child: Lottie.asset('assets/lotties/loading.json'),);
+         }
+         
+       })
+       
+      ), 
       drawer: Drawer(
   child: ListView(
     padding: EdgeInsets.zero,
@@ -114,51 +125,117 @@ class Home extends StatelessWidget {
   }
 }
 
-Widget TileView(Product product) {
-  return Card(
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-    children: [
-      IconButton(
-        onPressed: () {
+ Widget TileView(Product product) {
+  // NavigationService service = NavigationService();
 
-        },
-      icon: const Icon(Icons.favorite),
-      iconSize: 15),
-      Center(
-        child: Image.network(product.imageLink, 
-        height: 90,
-        width: 90,
-        alignment: Alignment.center,
+  return Card(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        IconButton(
+          onPressed: () {
+            FirebaseAuth.instance
+              .authStateChanges()
+              .listen((User? user) {
+                if (user != null) {
+                  print(user);
+                  String? uid = user.email;
+                  print(uid);
+                  int id= product.id;
+                  user_collection
+                  .doc(user.email)
+                  .collection('Fav')
+                  .doc(id.toString())
+                  .set({
+                    'Price':product.price,
+                    'Name': product.name,
+                    'Image': product.imageLink,   
+                    'Desc' : product.description,     
+                    });
+                }
+              });
+              Fluttertoast.showToast(
+          msg: "Added to Fav",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 2,
+          backgroundColor: const Color.fromARGB(255, 240, 194, 190),
+          textColor: Colors.white,
+          fontSize: 16.0
+      );
+          },
+        icon: const Icon(Icons.favorite),
+        iconSize: 15),
+        Center(
+          child: Image.network(product.imageLink, 
+          height: 90,
+          width: 90,
+          alignment: Alignment.center,
+          ),
         ),
-      ),
-      Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Text(product.name, 
-        style: const TextStyle(
-          fontSize: 9,
-          fontWeight: FontWeight.bold,
-        ),),
-      ),
-      Center(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
+        Padding(
+          padding: const EdgeInsets.all(2.0),
+          child: Text(product.name, 
+          style: const TextStyle(
+            fontSize: 9,
+            fontWeight: FontWeight.bold,
+          ),),
+        ),
+        Center(
+          child: Text("Rs "+ product.price,
+              style: const TextStyle(fontWeight: FontWeight.bold,
+              fontSize: 10),),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Text(product.price,
-            style: const TextStyle(fontWeight: FontWeight.bold),),
-            const SizedBox(width: 10,),
-            IconButton( // shooping cart
+            TextButton(onPressed: () async {
+            // add button for display
+            await Get.to(Display(product: product));
+            // Get.off(Display(product: product));
+            //  service.routeTo('/screen2', arguments: 'just a test');
+
+            }, child: const Text('Full View',
+            style: TextStyle(fontSize: 10))),
+            IconButton( // shopping cart
               onPressed: () { 
-                
+                  FirebaseAuth.instance
+            .authStateChanges()
+            .listen((User? user) {
+              if (user != null) {
+                print(user);
+                String? uid = user.email;
+                print(uid);
+                int id= product.id;
+                user_collection
+                .doc(user.email)
+                .collection('Cart')
+                .doc(id.toString())
+                .set({
+                  'Price':product.price,
+                  'Name': product.name,
+                  'Image': product.imageLink,   
+                  'Desc' : product.description,     
+                  });
+              }
+            });
+            Fluttertoast.showToast(
+        msg: "Added to Cart",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 2,
+        backgroundColor: const Color.fromARGB(255, 240, 194, 190),
+        textColor: Colors.white,
+        fontSize: 16.0
+      );
             }, 
             icon: const Icon(Icons.shopping_cart),
-            iconSize: 20,
-            alignment: Alignment.bottomLeft,),
+            iconSize: 15,
+            ),
           ],
-        ),
-      )
-    ],
-    ),
-  );
+        )
+      ],
+      ),
+    );
 }

@@ -2,6 +2,7 @@ import 'package:e_commerce/pages/signin.dart';
 import 'package:flutter/material.dart';
 import 'package:e_commerce/services/auth.dart';
 import 'package:flutter/services.dart';
+import 'package:lottie/lottie.dart';
 import 'package:neopop/widgets/buttons/neopop_button/neopop_button.dart';
 
 class Login extends StatefulWidget {
@@ -21,7 +22,7 @@ class _LoginState extends State<Login> {
     TextEditingController _password = TextEditingController();
 
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 231, 230, 230),
+      backgroundColor: const Color.fromARGB(255, 110, 84, 84),
       body: SafeArea(
         child: Center(
           child: Container(
@@ -31,12 +32,17 @@ class _LoginState extends State<Login> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const SizedBox(height: 100),
+                  // const SizedBox(height: 100),
+                  Lottie.asset('assets/lotties/login.json'),
                   TextField(
                     controller: _email,
                 decoration: InputDecoration(
+                  filled: true,
+                          fillColor: Colors.white70,
                   border: OutlineInputBorder(
+                  
                     borderRadius: BorderRadius.circular(10.0),
+                    
                   ),
                   labelText: 'E-mail ID',
                 ),
@@ -46,6 +52,8 @@ class _LoginState extends State<Login> {
                 controller: _password,
                 obscureText: true,
                 decoration:  InputDecoration(
+                  filled: true,
+                          fillColor: Colors.white70,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10.0),
                   ),
@@ -79,12 +87,14 @@ class _LoginState extends State<Login> {
                         }),),
 
 
-
                   const SizedBox(height: 10,),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text('Not a memeber?'),
+                      const Text('Not a memeber?', 
+                      style: TextStyle(
+                        color: Colors.white70,
+                      ),),
                       const SizedBox(width: 5,),
                       TextButton(
                     child: const Text('Join now'),
