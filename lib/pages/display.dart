@@ -17,90 +17,144 @@ class _DisplayState extends State<Display> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: [
-            Image.asset(widget.product.imageLink), //image
-            Text(widget.product.name), //name
-            Text(widget.product.description), //desc
-            Text(widget.product.price), //price 
-            Row(
+      appBar: AppBar(
+        title: const Text('Jomo'),
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: const Color.fromARGB(255, 110, 84, 84),),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Center(
+            child: Column(
               children: [
-                IconButton( // shooping cart
-                onPressed: () { 
+                Container(
+                padding: const EdgeInsets.all(10),
+                margin: const EdgeInsets.all(12),
+                width: 300,
+                height: 300,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: NetworkImage(widget.product.imageLink),
+                    fit: BoxFit.contain,
+                  ),
+                ),
+              ),
+                // Image.asset(widget.product.imageLink), //image
+                Text(widget.product.name,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),), //name
+                const SizedBox(height: 7,),
+                Text(widget.product.description,
+                style: const TextStyle(
+                  fontSize: 16
+                ),), //desc
+                SizedBox(height: 30,),
+                Container(
+                      decoration: BoxDecoration(
+                        color: Colors.black,
+                        border: Border.all(
+                          color: Colors.white70,
+                        ),
+                        borderRadius: const BorderRadius.all(Radius.circular(20))
+                      ),
+                      alignment: Alignment.center,
+                      child: Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Text("Price: Rs " + widget.product.price,
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 14
+                                      ),),
+                      ),
+                    ),//price 
+                BottomAppBar(
+              elevation: 0,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  TextButton(
+                    onPressed: () {
+                       FirebaseAuth.instance
+                  .authStateChanges()
+                  .listen((User? user) {
+                    if (user != null) {
+                      print(user);
+                      String? uid = user.email;
+                      print(uid);
+                      int id= widget.product.id;
+                      user_collection
+                      .doc(user.email)
+                      .collection('Cart')
+                      .doc(id.toString())
+                      .set({
+                        'Price':widget.product.price,
+                        'Name': widget.product.name,
+                        'Image': widget.product.imageLink,   
+                        'Desc' : widget.product.description,     
+                        });
+                    }
+                  });
+                  Fluttertoast.showToast(
+              msg: "Added to Cart",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 2,
+              backgroundColor: const Color.fromARGB(255, 240, 194, 190),
+              textColor: Colors.white,
+              fontSize: 16.0
+            );
+                    },
+                    child: const Text('Add to Cart',
+                    style: TextStyle(
+                      color: Colors.black,
+                    ),),
+                  ),
+                  TextButton(onPressed: (){
                     FirebaseAuth.instance
-              .authStateChanges()
-              .listen((User? user) {
-                if (user != null) {
-                  print(user);
-                  String? uid = user.email;
-                  print(uid);
-                  int id= widget.product.id;
-                  user_collection
-                  .doc(user.email)
-                  .collection('Cart')
-                  .doc(id.toString())
-                  .set({
-                    'Price':widget.product.price,
-                    'Name': widget.product.name,
-                    'Image': widget.product.imageLink,   
-                    'Desc' : widget.product.description,     
-                    });
-                }
-              });
-              Fluttertoast.showToast(
-          msg: "Added to Cart",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 2,
-          backgroundColor: Color.fromARGB(255, 240, 194, 190),
-          textColor: Colors.white,
-          fontSize: 16.0
-      );
-              }, 
-              icon: const Icon(Icons.shopping_cart),
-              iconSize: 20,
-              alignment: Alignment.bottomLeft,),
-
-              IconButton(
-          onPressed: () {
-            FirebaseAuth.instance
-              .authStateChanges()
-              .listen((User? user) {
-                if (user != null) {
-                  print(user);
-                  String? uid = user.email;
-                  print(uid);
-                  int id= widget.product.id;
-                  user_collection
-                  .doc(user.email)
-                  .collection('Fav')
-                  .doc(id.toString())
-                  .set({
-                    'Price':widget.product.price,
-                    'Name': widget.product.name,
-                    'Image': widget.product.imageLink,   
-                    'Desc' : widget.product.description,      
-                    });
-                }
-              });
-              Fluttertoast.showToast(
-          msg: "Added to Fav",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 2,
-          backgroundColor: Color.fromARGB(255, 240, 194, 190),
-          textColor: Colors.white,
-          fontSize: 16.0
-      );
-          },
-        icon: const Icon(Icons.favorite),
-        iconSize: 15),
+                  .authStateChanges()
+                  .listen((User? user) {
+                    if (user != null) {
+                      print(user);
+                      String? uid = user.email;
+                      print(uid);
+                      int id= widget.product.id;
+                      user_collection
+                      .doc(user.email)
+                      .collection('Fav')
+                      .doc(id.toString())
+                      .set({
+                        'Price':widget.product.price,
+                        'Name': widget.product.name,
+                        'Image': widget.product.imageLink,   
+                        'Desc' : widget.product.description,      
+                        });
+                    }
+                  });
+                  Fluttertoast.showToast(
+              msg: "Added to Fav",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 2,
+              backgroundColor: const Color.fromARGB(255, 240, 194, 190),
+              textColor: Colors.white,
+              fontSize: 16.0
+            );
+                  }, 
+                  child: const Text('Add to Fav',
+                  style: TextStyle(
+                    color: Colors.black
+                  ),))
+                  ]
+                  ),
+                  ),
               ],
             ),
-
-          ],
-        )),
+          ),
+        ),
+      ),
     );
   }
 }

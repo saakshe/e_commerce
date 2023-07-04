@@ -1,6 +1,4 @@
 import 'package:e_commerce/pages/welcome.dart';
-import 'package:e_commerce/routes/navigation_service.dart';
-import 'package:e_commerce/routes/route_generator.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 

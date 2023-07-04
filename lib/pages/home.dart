@@ -1,5 +1,3 @@
-import 'dart:async';
-import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_commerce/models/product.dart';
 import 'package:e_commerce/pages/fav.dart';
@@ -9,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
-import '../routes/navigation_service.dart';
 import '../services/productcontroller.dart';
 import 'cart.dart';
 import 'display.dart';
@@ -39,7 +36,7 @@ class Home extends StatelessWidget {
                 onPressed: () {
                   Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const Cart()),
+                  MaterialPageRoute(builder: (context) =>  Cart()),
               );
                 },
               ),
@@ -59,7 +56,7 @@ class Home extends StatelessWidget {
                ), 
                itemCount: productController.productList.length,
              itemBuilder: (context, index) {
-                 return TileView(productController.productList[index]);
+                 return TileView(productController.productList[index], context);
                },);
          } else {
            return Center(
@@ -95,7 +92,7 @@ class Home extends StatelessWidget {
         onTap: () {
           Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const Cart()),
+              MaterialPageRoute(builder: (context) =>  Cart()),
             );
         },
       ),
@@ -125,48 +122,14 @@ class Home extends StatelessWidget {
   }
 }
 
- Widget TileView(Product product) {
+ Widget TileView(Product product, BuildContext context) {
   // NavigationService service = NavigationService();
 
   return Card(
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
+        // crossAxisAlignment: CrossAxisAlignment.end,
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        IconButton(
-          onPressed: () {
-            FirebaseAuth.instance
-              .authStateChanges()
-              .listen((User? user) {
-                if (user != null) {
-                  print(user);
-                  String? uid = user.email;
-                  print(uid);
-                  int id= product.id;
-                  user_collection
-                  .doc(user.email)
-                  .collection('Fav')
-                  .doc(id.toString())
-                  .set({
-                    'Price':product.price,
-                    'Name': product.name,
-                    'Image': product.imageLink,   
-                    'Desc' : product.description,     
-                    });
-                }
-              });
-              Fluttertoast.showToast(
-          msg: "Added to Fav",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 2,
-          backgroundColor: const Color.fromARGB(255, 240, 194, 190),
-          textColor: Colors.white,
-          fontSize: 16.0
-      );
-          },
-        icon: const Icon(Icons.favorite),
-        iconSize: 15),
         Center(
           child: Image.network(product.imageLink, 
           height: 90,
@@ -190,14 +153,56 @@ class Home extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            TextButton(onPressed: () async {
+            TextButton(
+              onPressed: () async {
             // add button for display
-            await Get.to(Display(product: product));
+            // await Get.to(Display(product: product));
             // Get.off(Display(product: product));
             //  service.routeTo('/screen2', arguments: 'just a test');
 
-            }, child: const Text('Full View',
-            style: TextStyle(fontSize: 10))),
+            await Navigator.push(
+                                          context,
+                                          MaterialPageRoute(builder: (context) =>  Display(product: product)),
+                                        );
+
+            }, child: const Text('More details',
+            style: TextStyle(fontSize: 10,
+            color: Colors.black))),
+            IconButton(
+          onPressed: () {
+            FirebaseAuth.instance
+              .authStateChanges()
+              .listen((User? user) {
+                if (user != null) {
+                  print(user);
+                  String? uid = user.email;
+                  print(uid);
+                  int id= product.id;
+                  user_collection
+                  .doc(user.email)
+                  .collection('Fav')
+                  .doc(id.toString())
+                  .set({
+                    'Price':product.price,
+                    'Name': product.name,
+                    'Image': product.imageLink,   
+                    'Desc' : product.description,
+                    'ID': product.id.toString(),     
+                    });
+                }
+              });
+              Fluttertoast.showToast(
+          msg: "Added to Fav",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 2,
+          backgroundColor: const Color.fromARGB(255, 240, 194, 190),
+          textColor: Colors.white,
+          fontSize: 16.0
+      );
+          },
+        icon: const Icon(Icons.favorite),
+        iconSize: 15),
             IconButton( // shopping cart
               onPressed: () { 
                   FirebaseAuth.instance
@@ -216,7 +221,8 @@ class Home extends StatelessWidget {
                   'Price':product.price,
                   'Name': product.name,
                   'Image': product.imageLink,   
-                  'Desc' : product.description,     
+                  'Desc' : product.description, 
+                  'ID': product.id.toString(),    
                   });
               }
             });

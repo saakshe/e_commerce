@@ -24,6 +24,7 @@ class ProductController extends GetxController {
     }
   }
 }
+
 class RemoteServices {
   static var client = http.Client();
 
